@@ -4,17 +4,18 @@
 #include <SDL.h>
 
 #include "menuitem.h"
-#include "engine.h"
+
 
 class Engine;
 
 class GameState{
 public:
-  GameState(Engine*);
-  virtual ~GameState();
+  GameState();
+  ~GameState();
   virtual void keydown(SDL_Keycode keycode);
-  virtual void update();
+  virtual void update(double);
   virtual void render();
+  void setEngine(Engine *e);
   Engine *e;
 };
 
@@ -24,7 +25,7 @@ class GameState_Menu : public GameState{
     GameState_Menu();
     ~GameState_Menu();
     void keydown(SDL_Keycode keycode);
-    void update();
+    void update(double);
     void addItem(MenuItem*);
     void render();
     void buildMenu();
@@ -32,15 +33,19 @@ class GameState_Menu : public GameState{
     std::vector<MenuItem*> *items;
     MenuItem *active_item;
     unsigned int index;
-    Engine *e;
 };
 
 class GameState_Game : public GameState{
   public:
     GameState_Game();
     ~GameState_Game();
+    void addFlyingItem(GameItem*);
     void keydown(SDL_Keycode keycode);
-    void update();
+    void update(double);
+    void render();
+  private:
+    TextTypeItem *typeitem;
+    std::vector<GameItem*> *items;
 
 };
 
