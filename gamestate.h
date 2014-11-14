@@ -26,9 +26,8 @@ class GameState_Menu : public GameState{
     ~GameState_Menu();
     void keydown(SDL_Keycode keycode);
     void update(double);
-    void addItem(MenuItem*);
+    void addMenuItem(MenuItem*);
     void render();
-    void buildMenu();
   private:
     std::vector<MenuItem*> *items;
     MenuItem *active_item;
@@ -39,7 +38,8 @@ class GameState_Game : public GameState{
   public:
     GameState_Game();
     ~GameState_Game();
-    void addFlyingItem(GameItem*);
+    void addGameItem(GameItem*);
+    void addTextTypeItem();
     void keydown(SDL_Keycode keycode);
     void update(double);
     void render();

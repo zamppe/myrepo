@@ -56,35 +56,40 @@ void GameState_Menu::update(double){
 }
 
 
-void GameState_Menu::addItem(MenuItem *item){
+void GameState_Menu::addMenuItem(MenuItem *item){
+  item->texture_white->make((int)item->x, (int)item->y, &item->text, e->getRenderer(), e->getFont(), {255, 255, 255});
+  item->texture_green->make((int)item->x, (int)item->y, &item->text, e->getRenderer(), e->getFont(), {255, 0, 0});
+
   items->push_back(item);
 
 }
 void GameState_Menu::render(){
   unsigned int i = 0;
   for(auto &item:*items){
-    e->renderText(item, i == index);
+    item->render(i == index);
     i++;
   }
 }
 
 GameState_Game::GameState_Game(){
   items = new std::vector<GameItem*>;
-  typeitem = new TextTypeItem(50, 50, "a");
 }
 
-void GameState_Game::addFlyingItem(GameItem *item){
-  e->allocateGameItemTexture(item);
+void GameState_Game::addGameItem(GameItem *item){
+  item->texture_white->make((int)item->x, (int)item->y, &item->text, e->getRenderer(), e->getFont(), {255, 255, 255});
   items->push_back(item);
 }
 
-#include <stdio.h>
+void GameState_Game::addTextTypeItem(){
+  typeitem = new TextTypeItem(50, 50, "a");
+}
+
 void GameState_Game::keydown(SDL_Keycode keycode){
 
   if(keycode==SDLK_ESCAPE){
     e->activateState("menu");
   }
-  if(keycode > 96 && keycode < 123 )
+  if(keycode >= 'a' && keycode <= 'z' )
   {
     typeitem->addChar(keycode);
   }
@@ -95,9 +100,8 @@ void GameState_Game::keydown(SDL_Keycode keycode){
     for(auto &item : *items){
       //compare entered text to all flying texts until mats is found
       if(typeitem->text.compare(item->text)==0){
-        printf("mats!!!!!!!!!\n");
+        ;//mats
       }
-      else printf("%s does not mats to %s\n", typeitem->text.c_str(), item->text.c_str());
 
     }
     typeitem->clearText();
@@ -105,18 +109,19 @@ void GameState_Game::keydown(SDL_Keycode keycode){
 }
 
 void GameState_Game::update(double dt){
+  typeitem->texture_white->make((int)typeitem->x, (int)typeitem->y, &typeitem->text, e->getRenderer(), e->getFont(), {255, 255, 255});
 
   for(auto &item: *items){
     item->x = item->x + item->vx * dt;
-    printf("%f", dt);
-    e->updateGameTextures();
-    printf("%f\n", item->x);
+    item->texture_white->setX((int)item->x);
+    item->texture_white->setY((int)item->y);
   }
 
 }
 
 void GameState_Game::render(){
-  e->updateTypeTexture(typeitem);
-  e->renderTextTypeItem();
-  e->renderGameItems();
+  typeitem->render();
+  for(auto &item: *items){
+    item->render();
+  }
 }
