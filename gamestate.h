@@ -1,10 +1,13 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 #include <vector>
+#include <algorithm>
 #include <SDL.h>
 
 #include "menuitem.h"
+#include "level.h"
 
+bool rect_rect_collision(SDL_Rect*, SDL_Rect*);
 
 class Engine;
 
@@ -15,6 +18,7 @@ public:
   virtual void keydown(SDL_Keycode keycode);
   virtual void update(double);
   virtual void render();
+  virtual void reset();
   void setEngine(Engine *e);
   Engine *e;
 };
@@ -39,11 +43,16 @@ class GameState_Game : public GameState{
     GameState_Game();
     ~GameState_Game();
     void addGameItem(GameItem*);
-    void addTextTypeItem();
+    void removeGameItem(GameItem*);
+    void loadLevel(std::string filename);
+    void addTextTypeItem(int x, int y, std::string text = "");
     void keydown(SDL_Keycode keycode);
     void update(double);
     void render();
+    void reset();
+    Level *level;
   private:
+
     TextTypeItem *typeitem;
     std::vector<GameItem*> *items;
 

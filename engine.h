@@ -2,7 +2,6 @@
 #define ENGINE_H
 
 #include <SDL.h>
-#include <SDL2/SDL_image.h>
 #include <SDL2/SDL_ttf.h>
 #include <string>
 #include <map>
@@ -16,7 +15,7 @@
 class GameState;
 class Engine{
   public:
-    Engine();
+    Engine(int w, int h);
     ~Engine();
     void start();
     void activateState(std::string);
@@ -24,19 +23,21 @@ class Engine{
     void stop();
     SDL_Renderer* getRenderer();
     TTF_Font* getFont();
+    SDL_Rect* getRect();
+    time_t seed;
   private:
     void loop();
     bool wroom;
 
-    const int SCREEN_WIDTH = 1600;
-    const int SCREEN_HEIGHT = 600;
-
+    SDL_Rect *window_rect;
     SDL_Window *gWindow;
     SDL_Renderer *gRenderer;
     TTF_Font *gFont;
 
     SDL_Event e;
     Uint32 old_time, current_time;
+    double DT;
+    double accumulator;
     std::map <std::string, GameState*> states;
     GameState *gamestate_active;
 };

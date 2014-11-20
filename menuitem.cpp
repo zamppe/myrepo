@@ -12,8 +12,8 @@ Texture::~Texture(){
 }
 
 void Texture::make(int x, int y, std::string *text, SDL_Renderer *renderer, TTF_Font *font, SDL_Color color){
-  if(texture != NULL) SDL_DestroyTexture(texture);
-  if(this->renderer == NULL) this->renderer = renderer;
+  if(texture) SDL_DestroyTexture(texture);
+  if(!this->renderer) this->renderer = renderer;
   SDL_Surface *textSurface = NULL;
   textSurface = TTF_RenderText_Solid( font, text->c_str(), color );
   texture = SDL_CreateTextureFromSurface( this->renderer, textSurface );
@@ -23,6 +23,20 @@ void Texture::make(int x, int y, std::string *text, SDL_Renderer *renderer, TTF_
   *quad =  { x, y, fontsize * (int)text->length(), fontsize};
 }
 
+void Texture::update(int x, int y, std::string *text, TTF_Font *font, SDL_Color color){
+  if(texture) SDL_DestroyTexture(texture);
+  SDL_Surface *textSurface = NULL;
+  textSurface = TTF_RenderText_Solid( font, text->c_str(), color );
+  texture = SDL_CreateTextureFromSurface( this->renderer, textSurface );
+  SDL_FreeSurface(textSurface);
+
+  int fontsize = TTF_FontHeight(font);
+  *quad =  { x, y, fontsize * (int)text->length(), fontsize};
+}
+
+SDL_Rect* Texture::getRect(){
+  return quad;
+}
 
 void Texture::setX(int x){
   quad->x = x;
@@ -75,9 +89,12 @@ void TextTypeItem::clearText(){
   this->text.erase(this->text.begin(), this->text.end());
 }
 
+
 void TextTypeItem::render(){
   texture_white->render();
 }
+
+
 
 GameItem::GameItem( double x, double y, double vx, double vy, std::string text ){
   this->x = x;
@@ -89,9 +106,21 @@ GameItem::GameItem( double x, double y, double vx, double vy, std::string text )
 }
 
 GameItem::~GameItem(){
-  ;
+  delete texture_white;
 }
 
 void GameItem::render(){
   texture_white->render();
+}
+
+void GameItem::update(double dt){
+  x += vx * dt;
+  texture_white->setX((int)x);
+  texture_white->setY((int)y);
+
+}
+
+void GameItem::setX(double x){
+  this->x = x;
+  texture_white->setX((int)x);
 }
